@@ -1,0 +1,484 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CM SIM: THE KERALA TIGHTROPE (RETRO CRT EDITION)</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=VT323&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --pixel-size: 6px;
+            --crt-green: #32cd32;
+            --crt-blue: #3b82f6;
+            --crt-red: #ff4500;
+        }
+
+        * {
+            image-rendering: pixelated;
+        }
+
+        body {
+            font-family: 'VT323', monospace;
+            background-color: #0c0c0c;
+            color: #fff;
+            overflow-x: hidden;
+            font-size: 20px;
+        }
+
+        /* CRT Effects */
+        body::before {
+            content: " ";
+            display: block;
+            position: fixed;
+            top: 0; left: 0; bottom: 0; right: 0;
+            background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
+            z-index: 9999;
+            background-size: 100% 4px, 3px 100%;
+            pointer-events: none;
+        }
+
+        /* RETRO CONTAINERS */
+        .retro-box {
+            background: #000;
+            border: 4px solid #fff;
+            box-shadow: 8px 8px 0px #444;
+            padding: 1.5rem;
+            position: relative;
+        }
+
+        .retro-box-blue { border-color: var(--crt-blue); box-shadow: 8px 8px 0px #1e3a8a; }
+        .retro-box-red { border-color: var(--crt-red); box-shadow: 8px 8px 0px #7f1d1d; }
+        .retro-box-green { border-color: var(--crt-green); box-shadow: 8px 8px 0px #064e3b; }
+
+        /* SATHEESHAN 5.0 - PIXEL PERFECT */
+        .pixel-avatar {
+            display: grid;
+            grid-template-columns: repeat(16, 1fr);
+            width: calc(16 * var(--pixel-size));
+            height: calc(16 * var(--pixel-size));
+            border: 4px solid #fff;
+        }
+
+        .px { width: var(--pixel-size); height: var(--pixel-size); }
+        .p-hair { background-color: #1a110a; } 
+        .p-skin { background-color: #e8be96; } 
+        .p-skin-d { background-color: #c6946a; } 
+        .p-white { background-color: #ffffff; } 
+        .p-mustache { background-color: #000000; } 
+        .p-eye { background-color: #000000; }
+        .p-0 { background-color: transparent; }
+
+        /* NEWS TICKER */
+        .ticker-wrap {
+            position: fixed;
+            top: 0;
+            width: 100%;
+            background: var(--crt-blue);
+            color: white;
+            overflow: hidden;
+            height: 40px;
+            z-index: 1000;
+            display: flex;
+            align-items: center;
+            border-bottom: 4px solid #fff;
+        }
+
+        .ticker {
+            display: inline-block;
+            white-space: nowrap;
+            animation: ticker 40s linear infinite;
+            font-size: 24px;
+            padding-left: 100%; 
+        }
+
+        @keyframes ticker {
+            0% { transform: translate3d(0, 0, 0); }
+            100% { transform: translate3d(-100%, 0, 0); }
+        }
+
+        /* INPUTS */
+        .retro-slider {
+            -webkit-appearance: none;
+            width: 100%;
+            height: 12px;
+            background: #222;
+            border: 2px solid #fff;
+        }
+
+        .retro-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            width: 16px;
+            height: 24px;
+            background: #fff;
+            border: 2px solid #000;
+            cursor: pointer;
+        }
+
+        .btn-retro {
+            background: #fff;
+            color: #000;
+            padding: 0.5rem 1rem;
+            border: 0;
+            box-shadow: 4px 4px 0px #888;
+            font-weight: bold;
+            text-transform: uppercase;
+            transition: all 0.1s;
+        }
+
+        .btn-retro:active {
+            transform: translate(2px, 2px);
+            box-shadow: 2px 2px 0px #444;
+        }
+
+        .btn-retro:disabled {
+            background: #444;
+            color: #888;
+            box-shadow: 2px 2px 0px #222;
+        }
+
+        /* MODALS */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.9);
+            z-index: 5000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 2rem;
+        }
+
+        .help-btn {
+            position: fixed; bottom: 1.5rem; right: 1.5rem;
+            z-index: 1001; width: 50px; height: 50px;
+            background: var(--crt-blue); border: 4px solid #fff;
+            color: #fff; display: flex; align-items: center; justify-content: center;
+            cursor: pointer; font-size: 32px;
+        }
+
+        .wobble { animation: wobble 2s infinite ease-in-out; }
+        @keyframes wobble { 0%, 100% { transform: scale(1); } 50% { transform: scale(1.05); } }
+    </style>
+</head>
+<body class="pt-16">
+
+    <!-- INTRO MODAL -->
+    <div id="intro-modal" class="modal-overlay">
+        <div class="retro-box retro-box-blue max-w-xl h-fit space-y-6">
+            <h2 class="text-4xl text-blue-400">>> WELCOME CM SATHEESHAN</h2>
+            <div class="space-y-4 leading-none">
+                <p>MISSION: BALANCE THE KERALA MODEL UNTIL 2036.</p>
+                <ul class="list-disc pl-8 space-y-2">
+                    <li><span class="text-green-400">CASH:</span> MUST STAY ABOVE 0.</li>
+                    <li><span class="text-red-400">OMB DEBT:</span> LIMIT +45,000 CR.</li>
+                    <li><span class="text-blue-400">TRUST:</span> 67% NEEDED BY 2031.</li>
+                </ul>
+                <p class="text-yellow-400">WARNING: 2000 CR FUNDING CAUSES TRUST DECAY!</p>
+            </div>
+            <button onclick="closeIntro()" class="btn-retro w-full py-4 text-2xl">INITIATE FISCAL YEAR</button>
+        </div>
+    </div>
+
+    <!-- HELP MODAL -->
+    <div id="help-modal" class="modal-overlay hidden">
+        <div class="retro-box max-w-xl h-fit space-y-6">
+            <h2 class="text-3xl">>> GOVERNANCE MANUAL</h2>
+            <div class="grid grid-cols-1 gap-4 text-lg">
+                <div class="border-b border-zinc-700 pb-2">
+                    <span class="text-blue-400">OMB LOANS:</span> INSTANT CASH, LONG-TERM INTEREST.
+                </div>
+                <div class="border-b border-zinc-700 pb-2">
+                    <span class="text-green-400">MANIFESTO:</span> BIG TRUST GAINS, PERMANENT QUARTERLY DRAIN.
+                </div>
+                <div class="border-b border-zinc-700 pb-2">
+                    <span class="text-red-400">TRUST:</span> SPEND > 3500 CR PER SECTOR TO GROW TRUST.
+                </div>
+            </div>
+            <button onclick="toggleHelp()" class="btn-retro w-full">RESUME TIGHTROPE</button>
+        </div>
+    </div>
+
+    <div class="help-btn" onclick="toggleHelp()">?</div>
+
+    <div class="ticker-wrap">
+        <div class="ticker">
+            ** 2031 ELECTION APPROACHING ** 67% TRUST THRESHOLD ACTIVE ** GST COUNCIL DISPUTE ** KIIFB INFRA PROJECTS UNDER STRESS ** OMB CEILING WARNING ** SATHEESHAN VS THE DEFICIT **
+        </div>
+    </div>
+
+    <main class="max-w-4xl mx-auto p-4 space-y-8">
+        
+        <header class="retro-box flex flex-col md:flex-row items-center gap-8">
+            <div id="avatar" class="pixel-avatar wobble shrink-0"></div>
+            <div class="space-y-2 text-center md:text-left">
+                <h1 class="text-5xl italic text-blue-400">CM SIM: KERALA</h1>
+                <p class="text-xl uppercase">V.D. SATHEESHAN — TERM 1.0</p>
+                <div class="bg-white text-black px-4 py-1 inline-block text-2xl font-bold" id="quarter-display">Q1 2026</div>
+            </div>
+            <div class="md:ml-auto text-right w-full md:w-64">
+                <div class="text-xs uppercase mb-1">FISCAL_PROGRESS</div>
+                <div class="w-full h-4 bg-zinc-800 border-2 border-white overflow-hidden">
+                    <div id="tick-timer-bar" class="h-full bg-blue-500" style="width: 0%"></div>
+                </div>
+            </div>
+        </header>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div class="retro-box retro-box-green space-y-2">
+                <div class="text-s uppercase text-green-400">LIQUID_RESERVES</div>
+                <div id="cash-value" class="text-3xl text-green-400">₹48,000 Cr</div>
+                <div class="w-full h-2 bg-zinc-900 border border-white">
+                    <div id="cash-bar" class="h-full bg-green-400" style="width: 100%"></div>
+                </div>
+            </div>
+            <div class="retro-box retro-box-red space-y-2">
+                <div class="text-s uppercase text-red-400">OMB_DEBT</div>
+                <div id="debt-value" class="text-3xl text-red-400">₹4,50,000 Cr</div>
+                <div class="w-full h-2 bg-zinc-900 border border-white">
+                    <div id="debt-bar" class="h-full bg-red-400" style="width: 0%"></div>
+                </div>
+            </div>
+            <div class="retro-box retro-box-blue space-y-2">
+                <div class="flex justify-between items-center">
+                    <div class="text-s uppercase text-blue-400">PUBLIC_TRUST</div>
+                    <div id="mood-emoji" class="text-2xl">🙂</div>
+                </div>
+                <div id="happiness-value" class="text-4xl text-blue-400">70%</div>
+                <div class="w-full h-2 bg-zinc-900 border border-white">
+                    <div id="happiness-bar" class="h-full bg-blue-400" style="width: 70%"></div>
+                </div>
+            </div>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <div class="retro-box space-y-6">
+                <h2 class="text-2xl text-blue-400">>> ALLOCATIONS</h2>
+                <div id="sector-grid" class="flex flex-col gap-y-6"></div>
+                <div class="border-t-2 border-white pt-4 text-center">
+                    <div class="text-xs text-zinc-500 mb-1 uppercase">TOTAL_QUARTERLY_BURN</div>
+                    <div id="total-allocation-display" class="text-3xl text-white">₹12,000 Cr</div>
+                </div>
+            </div>
+
+            <div class="space-y-6">
+                <div class="retro-box retro-box-red space-y-4 border-dashed">
+                    <h2 class="text-xl text-red-400">>> TREASURY_ACTION</h2>
+                    <button id="btn-omb" class="btn-retro w-full bg-red-500 text-white">ISSUE OMB LOAN (10K Cr)</button>
+                </div>
+
+                <div class="retro-box space-y-4">
+                    <h2 class="text-xl">>> MANIFESTO</h2>
+                    <div id="manifesto-list" class="space-y-4"></div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <section id="notifications" class="fixed bottom-4 left-4 w-80 space-y-2 pointer-events-none z-[2000]"></section>
+
+    <div id="game-over" class="modal-overlay hidden">
+        <div class="retro-box retro-box-red max-w-xl text-center space-y-8">
+            <h2 class="text-7xl text-red-600 font-bold" id="game-over-title">TERMINATED</h2>
+            <p id="game-over-msg" class="text-2xl uppercase border-2 border-white p-4"></p>
+            <button onclick="location.reload()" class="btn-retro px-8 py-4 text-2xl">RE-LOAD GAME</button>
+        </div>
+    </div>
+
+    <script>
+        const avatarData = [
+            0,0,0,0,0,1,1,1,1,1,0,0,0,0,0,0,
+            0,0,0,1,1,2,2,2,2,2,1,1,0,0,0,0,
+            0,0,1,1,2,2,2,2,2,2,2,1,1,0,0,0,
+            0,1,1,2,2,2,2,2,2,2,2,2,1,1,0,0,
+            0,1,2,2,2,2,2,2,2,2,2,2,2,1,0,0,
+            1,1,2,2,2,2,2,2,2,2,2,2,2,1,1,0,
+            1,2,2,2,5,5,2,2,2,2,5,5,2,2,1,0, 
+            1,2,2,2,2,2,2,2,2,2,2,2,2,2,1,0,
+            1,2,2,2,2,2,2,2,2,2,2,2,2,2,1,0,
+            1,2,2,2,5,5,5,5,5,5,5,5,2,2,1,0, 
+            1,2,2,2,5,5,5,5,5,5,5,5,2,2,1,0, 
+            0,1,2,2,2,2,2,3,3,2,2,2,2,1,0,0, 
+            0,1,1,4,4,4,4,4,4,4,4,4,1,1,0,0, 
+            0,0,4,4,4,4,4,4,4,4,4,4,4,0,0,0,
+            0,4,4,4,4,4,4,4,4,4,4,4,4,4,0,0,
+            4,4,4,4,4,4,4,4,4,4,4,4,4,4,4,0
+        ];
+        const colors = ['p-0', 'p-hair', 'p-skin', 'p-skin-d', 'p-white', 'p-eye'];
+        const avatarEl = document.getElementById('avatar');
+        avatarData.forEach(p => {
+            const div = document.createElement('div');
+            div.className = `px ${colors[p]}`;
+            avatarEl.appendChild(div);
+        });
+
+        let state = {
+            quarter: 1, year: 2026, cash: 48000, debt: 450000, startDebt: 450000,
+            happiness: 70, revenue: 38000,
+            allocations: { 
+                healthcare: 2000, education: 2000, kiiifb: 2000,
+                agriculture: 2000, welfare: 2000, it_industry: 2000
+            },
+            manifesto: [
+                { id: 'ksrtc', name: 'FREE KSRTC BUS', icon: '🚌', cost: 1500, tick: 400, reward: 15, active: false, desc: '+15% TRUST' },
+                { id: 'stipend', name: 'STUDENT STIPEND', icon: '🎓', cost: 1200, tick: 300, reward: 10, active: false, desc: '+10% TRUST' },
+                { id: 'pension', name: 'WELFARE PENSION hike', icon: '👴', cost: 4000, tick: 1000, reward: 25, active: false, desc: '+25% TRUST' },
+                { id: 'health', name: 'UNIV. HEALTH INS.', icon: '🏥', cost: 3500, tick: 800, reward: 20, active: false, desc: '+20% TRUST' },
+                { id: 'startups', name: 'STARTUP LOANS', icon: '🚀', cost: 2000, tick: 500, revenueBoost: 200, active: false, desc: '+REV/TICK' }
+            ],
+            gameOver: false, tickProgress: 0, termExtended: false
+        };
+
+        const TICK_INTERVAL = 20000;
+        const ELECTION_THRESHOLD = 67;
+
+        function closeIntro() { document.getElementById('intro-modal').classList.add('hidden'); }
+        function toggleHelp() { document.getElementById('help-modal').classList.toggle('hidden'); }
+
+        function updateUI() {
+            document.getElementById('quarter-display').innerText = `Q${state.quarter} ${state.year}`;
+            document.getElementById('cash-value').innerText = `₹${Math.floor(state.cash).toLocaleString()} Cr`;
+            document.getElementById('debt-value').innerText = `₹${Math.floor(state.debt).toLocaleString()} Cr`;
+            document.getElementById('happiness-value').innerText = `${Math.floor(state.happiness)}%`;
+            
+            document.getElementById('cash-bar').style.width = `${Math.min(100, Math.max(0, (state.cash / 48000) * 100))}%`;
+            document.getElementById('debt-bar').style.width = `${Math.min(100, ((state.debt - state.startDebt) / 45000) * 100)}%`;
+            document.getElementById('happiness-bar').style.width = `${Math.min(100, state.happiness)}%`;
+            
+            // Mood Logic
+            const moodEl = document.getElementById('mood-emoji');
+            if (state.happiness >= 80) moodEl.innerText = '🤩';
+            else if (state.happiness >= 67) moodEl.innerText = '🙂';
+            else if (state.happiness >= 40) moodEl.innerText = '😐';
+            else if (state.happiness >= 20) moodEl.innerText = '😟';
+            else moodEl.innerText = '🤬';
+
+            const sectorGrid = document.getElementById('sector-grid');
+            sectorGrid.innerHTML = '';
+            let total = 0;
+            const sectorColors = { healthcare: '#ef4444', education: '#eab308', kiiifb: '#f97316', agriculture: '#22c55e', welfare: '#ec4899', it_industry: '#3b82f6' };
+
+            Object.keys(state.allocations).forEach(key => {
+                const val = state.allocations[key];
+                total += val;
+                const div = document.createElement('div');
+                div.className = 'space-y-1';
+                const color = sectorColors[key] || '#fff';
+                div.innerHTML = `
+                    <div class="flex justify-between text-sm">
+                        <span style="color: ${color}">${key.replace('_', ' ').toUpperCase()}</span>
+                        <span>₹${val.toLocaleString()}</span>
+                    </div>
+                    <input type="range" min="500" max="6000" step="100" value="${val}" 
+                           class="retro-slider" 
+                           style="background: linear-gradient(to right, ${color} 0%, #222 100%)"
+                           oninput="updateAllocation('${key}', this.value)">
+                `;
+                sectorGrid.appendChild(div);
+            });
+
+            document.getElementById('total-allocation-display').innerText = `₹${total.toLocaleString()} Cr`;
+            renderManifesto();
+        }
+
+        function updateAllocation(key, val) {
+            state.allocations[key] = parseInt(val);
+            updateUI();
+        }
+
+        function renderManifesto() {
+            const list = document.getElementById('manifesto-list');
+            list.innerHTML = '';
+            state.manifesto.forEach(item => {
+                const div = document.createElement('div');
+                div.className = `p-3 border-2 ${item.active ? 'border-green-400 bg-green-900/20' : 'border-zinc-700 bg-black'} flex items-center justify-between`;
+                div.innerHTML = `
+                    <div class="flex items-center gap-3">
+                        <span class="text-2xl">${item.icon}</span>
+                        <div class="leading-none">
+                            <div class="text-sm font-bold text-white uppercase">${item.name}</div>
+                            <div class="text-[14px] text-zinc-400 uppercase mt-1">${item.desc}</div>
+                        </div>
+                    </div>
+                    <button onclick="activateManifesto('${item.id}')" ${item.active || state.cash < item.cost ? 'disabled' : ''} class="btn-retro text-xs">
+                        ${item.active ? 'ACTIVE' : 'ENACT'}
+                    </button>
+                `;
+                list.appendChild(div);
+            });
+        }
+
+        function notify(msg, type = 'white') {
+            const el = document.createElement('div');
+            el.className = `p-3 border-4 border-white bg-black text-white uppercase italic text-sm`;
+            el.innerHTML = `>> ALERT: ${msg}`;
+            document.getElementById('notifications').appendChild(el);
+            setTimeout(() => el.remove(), 4000);
+        }
+
+        function tick() {
+            if (state.gameOver) return;
+            state.tickProgress = 0;
+            let rev = state.revenue;
+            const s = state.manifesto.find(m => m.id === 'startups');
+            if (s.active) rev += s.revenueBoost;
+            state.cash += rev;
+            const interest = (state.debt * 0.07) / 4;
+            let mTicks = 0;
+            state.manifesto.forEach(m => { if (m.active) mTicks += m.tick; });
+            let discretionary = 0;
+            Object.values(state.allocations).forEach(v => discretionary += v);
+            state.cash -= (18300 + interest + discretionary + mTicks);
+            const trustChange = (discretionary - 21000) / 1500;
+            state.happiness = Math.max(0, Math.min(100, state.happiness + trustChange));
+            if (state.cash < 0) { state.happiness -= 5; notify("RESERVES_EMPTY", 'red'); }
+            state.quarter++;
+            if (state.quarter > 4) { state.quarter = 1; state.year++; }
+            if (state.year === 2031 && state.quarter === 1 && !state.termExtended) {
+                if (state.happiness >= ELECTION_THRESHOLD) { state.termExtended = true; notify("TERM_EXTENDED_TO_2036", 'green'); }
+                else endGame("DEFEATED", "ELECTORATE REJECTED FISCAL STRATEGY.");
+            }
+            if (state.year === 2036) endGame("VICTORY", "KERALA_ULTIMATE_CHAMPION.");
+            if (state.happiness <= 0) endGame("RESIGNED", "POPULAR_UPRISING.");
+            if (state.debt - state.startDebt > 45000) endGame("BANKRUPT", "FEDERAL_TAKEOVER.");
+            updateUI();
+        }
+
+        function updateTickProgress() {
+            if (state.gameOver) return;
+            state.tickProgress += (1000 / TICK_INTERVAL) * 100;
+            document.getElementById('tick-timer-bar').style.width = `${state.tickProgress}%`;
+        }
+
+        function activateManifesto(id) {
+            const item = state.manifesto.find(m => m.id === id);
+            if (item && !item.active && state.cash >= item.cost) {
+                state.cash -= item.cost;
+                item.active = true;
+                if (item.reward) state.happiness += item.reward;
+                notify(`MANIFESTO_ENACTED: ${item.id.toUpperCase()}`, 'blue');
+                updateUI();
+            }
+        }
+
+        function issueOMB() {
+            state.cash += 10000;
+            state.debt += 10000;
+            notify("LOAN_ACQUIRED: OMB_10K", 'red');
+            updateUI();
+        }
+
+        function endGame(title, msg) {
+            state.gameOver = true;
+            document.getElementById('game-over').classList.remove('hidden');
+            document.getElementById('game-over-title').innerText = title;
+            document.getElementById('game-over-msg').innerText = msg;
+        }
+
+        document.getElementById('btn-omb').addEventListener('click', issueOMB);
+        updateUI();
+        setInterval(tick, TICK_INTERVAL);
+        setInterval(updateTickProgress, 1000);
+    </script>
+</body>
+</html>
