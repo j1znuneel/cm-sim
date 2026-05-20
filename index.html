@@ -278,10 +278,25 @@
     <section id="notifications" class="fixed bottom-4 left-4 w-80 space-y-2 pointer-events-none z-[2000]"></section>
 
     <div id="game-over" class="modal-overlay hidden">
-        <div class="retro-box retro-box-red max-w-xl text-center space-y-8">
+        <div class="retro-box retro-box-red max-w-xl text-center space-y-8 h-fit">
             <h2 class="text-7xl text-red-600 font-bold" id="game-over-title">TERMINATED</h2>
             <p id="game-over-msg" class="text-2xl uppercase border-2 border-white p-4"></p>
             <button onclick="location.reload()" class="btn-retro px-8 py-4 text-2xl">RE-LOAD GAME</button>
+        </div>
+    </div>
+
+    <!-- VICTORY MODAL -->
+    <div id="victory-modal" class="modal-overlay hidden">
+        <div class="retro-box retro-box-green max-w-2xl text-center space-y-8 h-fit">
+            <h2 class="text-6xl text-green-400 font-bold italic">>> SUCCESSFUL TENURE</h2>
+            <div class="text-2xl space-y-4 uppercase tracking-tighter leading-none">
+                <p>CONGRATULATIONS, CM SATHEESHAN!</p>
+                <p>YOU HAVE SUCCESSFULLY NAVIGATED KERALA THROUGH A DECADE OF FISCAL TURBULENCE (2026-2036).</p>
+                <div class="p-6 bg-green-900/20 border-4 border-green-400 text-lg">
+                    LEGACY: THE KERALA MODEL IS SECURE. YOU ARE REMEMBERED AS THE STATESMAN WHO BALANCED THE IMPOSSIBLE.
+                </div>
+            </div>
+            <button onclick="location.reload()" class="btn-retro px-8 py-4 text-2xl">RETIRE WITH HONOR</button>
         </div>
     </div>
 
@@ -326,13 +341,16 @@
                 { id: 'health', name: 'UNIV. HEALTH INS.', icon: '🏥', cost: 3500, tick: 800, reward: 20, active: false, desc: '+20% TRUST' },
                 { id: 'startups', name: 'STARTUP LOANS', icon: '🚀', cost: 2000, tick: 500, revenueBoost: 200, active: false, desc: '+REV/TICK' }
             ],
-            gameOver: false, tickProgress: 0, termExtended: false
+            gameOver: false, tickProgress: 0, termExtended: false, gameStarted: false
         };
 
-        const TICK_INTERVAL = 20000;
+        const TICK_INTERVAL = 10000;
         const ELECTION_THRESHOLD = 67;
 
-        function closeIntro() { document.getElementById('intro-modal').classList.add('hidden'); }
+        function closeIntro() { 
+            state.gameStarted = true;
+            document.getElementById('intro-modal').classList.add('hidden'); 
+        }
         function toggleHelp() { document.getElementById('help-modal').classList.toggle('hidden'); }
 
         function updateUI() {
@@ -389,15 +407,27 @@
         function renderManifesto() {
             const list = document.getElementById('manifesto-list');
             list.innerHTML = '';
+            
+            // Diminishing Returns Logic for UI
+            const startYear = state.termExtended ? 2031 : 2026;
+            const quartersElapsed = (state.year - startYear) * 4 + (state.quarter - 1);
+            const scalingFactor = Math.max(0.1, (20 - quartersElapsed) / 20);
+
             state.manifesto.forEach(item => {
                 const div = document.createElement('div');
                 div.className = `p-3 border-2 ${item.active ? 'border-green-400 bg-green-900/20' : 'border-zinc-700 bg-black'} flex items-center justify-between`;
+                
+                const currentReward = item.reward ? Math.floor(item.reward * scalingFactor) : 0;
+                const rewardDisplay = item.reward ? `+${currentReward}% TRUST` : item.desc;
+
                 div.innerHTML = `
                     <div class="flex items-center gap-3">
                         <span class="text-2xl">${item.icon}</span>
                         <div class="leading-none">
                             <div class="text-sm font-bold text-white uppercase">${item.name}</div>
-                            <div class="text-[14px] text-zinc-400 uppercase mt-1">${item.desc}</div>
+                            <div class="text-[14px] ${item.active ? 'text-green-400' : 'text-zinc-400'} uppercase mt-1">
+                                ${item.active ? 'ALREADY ENACTED' : rewardDisplay}
+                            </div>
                         </div>
                     </div>
                     <button onclick="activateManifesto('${item.id}')" ${item.active || state.cash < item.cost ? 'disabled' : ''} class="btn-retro text-xs">
@@ -417,7 +447,7 @@
         }
 
         function tick() {
-            if (state.gameOver) return;
+            if (state.gameOver || !state.gameStarted) return;
             state.tickProgress = 0;
             let rev = state.revenue;
             const s = state.manifesto.find(m => m.id === 'startups');
@@ -438,14 +468,14 @@
                 if (state.happiness >= ELECTION_THRESHOLD) { state.termExtended = true; notify("TERM_EXTENDED_TO_2036", 'green'); }
                 else endGame("DEFEATED", "ELECTORATE REJECTED FISCAL STRATEGY.");
             }
-            if (state.year === 2036) endGame("VICTORY", "KERALA_ULTIMATE_CHAMPION.");
+            if (state.year === 2036) showVictory();
             if (state.happiness <= 0) endGame("RESIGNED", "POPULAR_UPRISING.");
             if (state.debt - state.startDebt > 45000) endGame("BANKRUPT", "FEDERAL_TAKEOVER.");
             updateUI();
         }
 
         function updateTickProgress() {
-            if (state.gameOver) return;
+            if (state.gameOver || !state.gameStarted) return;
             state.tickProgress += (1000 / TICK_INTERVAL) * 100;
             document.getElementById('tick-timer-bar').style.width = `${state.tickProgress}%`;
         }
@@ -455,10 +485,26 @@
             if (item && !item.active && state.cash >= item.cost) {
                 state.cash -= item.cost;
                 item.active = true;
-                if (item.reward) state.happiness += item.reward;
-                notify(`MANIFESTO_ENACTED: ${item.id.toUpperCase()}`, 'blue');
+                
+                // Diminishing Returns Logic
+                let rewardMsg = "";
+                if (item.reward) {
+                    const startYear = state.termExtended ? 2031 : 2026;
+                    const quartersElapsed = (state.year - startYear) * 4 + (state.quarter - 1);
+                    const scalingFactor = Math.max(0.1, (20 - quartersElapsed) / 20);
+                    const scaledReward = item.reward * scalingFactor;
+                    state.happiness = Math.min(100, state.happiness + scaledReward);
+                    rewardMsg = ` (+${Math.floor(scaledReward)}% TRUST)`;
+                }
+                
+                notify(`ENACTED: ${item.id.toUpperCase()}${rewardMsg}`, 'blue');
                 updateUI();
             }
+        }
+
+        function showVictory() {
+            state.gameOver = true;
+            document.getElementById('victory-modal').classList.remove('hidden');
         }
 
         function issueOMB() {
