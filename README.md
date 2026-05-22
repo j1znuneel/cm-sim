@@ -2,7 +2,6 @@
 
 **CM SIM: KERALA** is a retro-style fiscal simulator game where you step into the shoes of the Chief Minister of Kerala. Your mission: navigate the state through a decade of fiscal turbulence from 2026 to 2036.
 
-![CM SIM: KERALA Screenshot](https://via.placeholder.com/800x400.png?text=CM+SIM:+KERALA+Gameplay)
 
 ## 🎮 The Mission
 
